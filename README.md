@@ -1,0 +1,1 @@
+# Solidworks-pack-go-macro
