@@ -30,9 +30,14 @@ Public Sub Main()
         Exit Sub
     End If
 
-    ' Show the configuration form
-    PackAndRenameForm.InitializeWithDefaults swModel
-    PackAndRenameForm.Show
+    ' Show the configuration form explicitly on a new instance to avoid
+    ' issues where the default form instance is not created by SOLIDWORKS
+    ' (e.g. when macros are imported in oudere builds). Using a dedicated
+    ' instance guarantees the pop-up is shown.
+    Dim dialog As PackAndRenameForm
+    Set dialog = New PackAndRenameForm
+    dialog.InitializeWithDefaults swModel
+    dialog.Show vbModal
 End Sub
 
 ' Perform pack and go with renaming based on user input
