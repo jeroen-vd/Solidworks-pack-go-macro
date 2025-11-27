@@ -44,12 +44,20 @@ SOLIDWORKS accepteert kant-en-klare macro’s als `.swp` (gecompileerde macro) o
 4. Controleer of de module `PackAndRename` en het formulier `PackAndRenameForm` zichtbaar zijn.
 5. Kies **File → Save** om de macro in dezelfde `.swp` op te slaan. Dit `.swp`-bestand kun je daarna direct laden en uitvoeren via **Tools → Macro → Run...**.
 
+**Belangrijke tip bij het importeren**
+- Importeer de `.bas` en `.frm` alleen in het nieuwe macrobestand dat je net hebt aangemaakt. Verwijder eventueel automatisch toegevoegde items zoals `Module1` als die leeg is, zodat alleen `PackAndRename` (module) en `PackAndRenameForm` (UserForm) overblijven.
+- Als je de bestanden per ongeluk meerdere keren importeert, kunnen er dubbele modules of formulieren ontstaan en zie je in SOLIDWORKS meerdere entries. Laat dan alleen één set staan (module + UserForm) en verwijder de duplicaten; sla daarna opnieuw op als `.swp`.
+
 ### Bouwen als .dll (optioneel)
 Alleen nodig als je een COM-add-in wilt met extra UI-logica. Stappen in hoofdlijnen:
 1. Open Visual Studio en maak een nieuw **Class Library**-project (vb.net of C#) met **.NET Framework** dat past bij jouw SOLIDWORKS-versie.
 2. Voeg referenties toe aan de SOLIDWORKS interop-assemblies (`SolidWorks.Interop.sldworks`, `SolidWorks.Interop.swconst`, `SolidWorks.Interop.swpublished`).
 3. Kopieer de logica uit `macros/PackAndRename.bas` naar een klas en schrijf een `ISwAddin`-implementatie die de functionaliteit aanroept.
 4. Compileer de `.dll` en registreer deze via **Tools → Add-ins → Add...** of met `regasm.exe`.
+
+## Foutopsporing bij laden in SOLIDWORKS
+- Krijg je meerdere macro-namen te zien bij het starten? Open de VBA-editor, controleer of er dubbele modules/userforms staan, verwijder de duplicaten en sla opnieuw op.
+- Verschijnt er een referentiefout bij het runnen? Controleer in de VBA-editor onder **Tools → References** of alle standaard SOLIDWORKS-referenties actief zijn (`SolidWorks <versie> Type Library`, `SldWorks <versie> Constant Type Library`). Zet ontbrekende referenties aan, sla op en test opnieuw.
 
 ## Aanpassen
 - Pas eventueel de startnummers aan in `PackAndRename.bas` (variabelen `partCounter` en `asmCounter`).
