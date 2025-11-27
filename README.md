@@ -13,13 +13,19 @@ Deze repository bevat een VBA-macro die het standaard Pack & Go-proces uitbreidt
 
 ## Gebruiksaanwijzing
 1. Open de bovenste assembly in SOLIDWORKS.
-2. Importeer `macros/PackAndRename.bas` en `macros/PackAndRenameForm.frm` in de VBA-editor (Tools → Macro → New/ Edit → File → Import File).
-3. Start de macro (`Main`).
-4. Vul in de pop-up:
+2. Ga naar **Tools → Macro → New...** en sla een lege macro op als `PackAndRename.swp` (of andere naam).
+3. De VBA-editor opent. Zorg dat **Project Explorer** zichtbaar is (View → Project Explorer). Klik in de tree op je nieuwe `.swp`.
+4. Importeer via **File → Import File** achtereenvolgens:
+   - `macros/PackAndRename.bas`
+   - `macros/PackAndRenameForm.frm`
+5. Verwijder lege standaarditems (bijv. `Module1`) zodat alleen `PackAndRename` (module) en `PackAndRenameForm` (UserForm) overblijven. Als je ze niet ziet: klik in Project Explorer op het project en kies **View → Code** of dubbelklik de module.
+6. Ga naar **File → Save**. Je kunt de macro nu direct runnen zonder opnieuw te openen.
+7. Start de macro (`Main`).
+8. Vul in de pop-up:
    - **Prefix**: gedeelde prefix voor alle bestanden.
    - **Exportmap**: doelmap voor de Pack & Go-uitvoer.
    - **Tekeningen meenemen**: vink aan indien je tekeningen wilt exporteren.
-5. Klik **Uitvoeren** om het Pack & Go-proces met nieuwe namen te starten.
+9. Klik **Uitvoeren** om het Pack & Go-proces met nieuwe namen te starten.
 
 ## Snelle testexport uitvoeren
 Wil je snel controleren of de macro in jouw SOLIDWORKS-omgeving correct exporteert? Gebruik dan deze stappen:
@@ -41,7 +47,7 @@ SOLIDWORKS accepteert kant-en-klare macro’s als `.swp` (gecompileerde macro) o
 3. De VBA-editor opent. Importeer de bestanden uit deze repository via **File → Import File**:
    - `macros/PackAndRename.bas`
    - `macros/PackAndRenameForm.frm`
-4. Controleer of de module `PackAndRename` en het formulier `PackAndRenameForm` zichtbaar zijn.
+4. Controleer in **Project Explorer** of `PackAndRename` (module) en `PackAndRenameForm` (UserForm) zichtbaar zijn en verwijder eventueel lege standaarditems zoals `Module1`.
 5. Kies **File → Save** om de macro in dezelfde `.swp` op te slaan. Dit `.swp`-bestand kun je daarna direct laden en uitvoeren via **Tools → Macro → Run...**.
 
 **Belangrijke tip bij het importeren**
@@ -56,8 +62,10 @@ Alleen nodig als je een COM-add-in wilt met extra UI-logica. Stappen in hoofdlij
 4. Compileer de `.dll` en registreer deze via **Tools → Add-ins → Add...** of met `regasm.exe`.
 
 ## Foutopsporing bij laden in SOLIDWORKS
-- Krijg je meerdere macro-namen te zien bij het starten? Open de VBA-editor, controleer of er dubbele modules/userforms staan, verwijder de duplicaten en sla opnieuw op.
-- Verschijnt er een referentiefout bij het runnen? Controleer in de VBA-editor onder **Tools → References** of alle standaard SOLIDWORKS-referenties actief zijn (`SolidWorks <versie> Type Library`, `SldWorks <versie> Constant Type Library`). Zet ontbrekende referenties aan, sla op en test opnieuw.
+- **Geen code zichtbaar na importeren**: controleer of Project Explorer het juiste project toont en dubbelklik op `PackAndRename` of `PackAndRenameForm`. Staat de code er niet? Verwijder de lege standaardmodule (`Module1`), importeer de `.bas` en `.frm` opnieuw in hetzelfde project en sla op.
+- **Krijg je meerdere macro-namen te zien bij het starten?** Open de VBA-editor, controleer of er dubbele modules/userforms staan, verwijder de duplicaten en sla opnieuw op.
+- **Referentiefout bij het runnen?** Controleer in de VBA-editor onder **Tools → References** of alle standaard SOLIDWORKS-referenties actief zijn (`SolidWorks <versie> Type Library`, `SldWorks <versie> Constant Type Library`). Zet ontbrekende referenties aan, sla op en test opnieuw.
+- **Macro doet niets**: zorg dat het actieve document een opgeslagen assembly is (geen part), dat de exportmap bestaat en schrijfrechten heeft en dat in de pop-up een prefix én exportmap zijn ingevuld.
 
 ## Aanpassen
 - Pas eventueel de startnummers aan in `PackAndRename.bas` (variabelen `partCounter` en `asmCounter`).
