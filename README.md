@@ -32,6 +32,25 @@ Wil je snel controleren of de macro in jouw SOLIDWORKS-omgeving correct exportee
    - **Tekeningen meenemen**: vink alleen aan als er tekeningen bij je test horen.
 4. Klik **Uitvoeren**. In de exportmap verschijnt één pakket met automatisch hernoemde bestanden (bijv. `TEST-A00`, `TEST-A01`, `TEST-P01`, ...). De nieuwe namen kun je direct openen in SOLIDWORKS om te controleren of alles klopt.
 
+## Macro omzetten naar .SWP of .dll
+SOLIDWORKS accepteert kant-en-klare macro’s als `.swp` (gecompileerde macro) of als COM-invoegtoepassing (`.dll`). Deze repository bevat de bronbestanden (`.bas` en `.frm`). Zo maak je er zelf een bruikbaar bestand van in SOLIDWORKS:
+
+### Opslaan als .SWP
+1. Open SOLIDWORKS en kies **Tools → Macro → New...**.
+2. Sla het lege macro-bestand op als `PackAndRename.swp` (willekeurige locatie).
+3. De VBA-editor opent. Importeer de bestanden uit deze repository via **File → Import File**:
+   - `macros/PackAndRename.bas`
+   - `macros/PackAndRenameForm.frm`
+4. Controleer of de module `PackAndRename` en het formulier `PackAndRenameForm` zichtbaar zijn.
+5. Kies **File → Save** om de macro in dezelfde `.swp` op te slaan. Dit `.swp`-bestand kun je daarna direct laden en uitvoeren via **Tools → Macro → Run...**.
+
+### Bouwen als .dll (optioneel)
+Alleen nodig als je een COM-add-in wilt met extra UI-logica. Stappen in hoofdlijnen:
+1. Open Visual Studio en maak een nieuw **Class Library**-project (vb.net of C#) met **.NET Framework** dat past bij jouw SOLIDWORKS-versie.
+2. Voeg referenties toe aan de SOLIDWORKS interop-assemblies (`SolidWorks.Interop.sldworks`, `SolidWorks.Interop.swconst`, `SolidWorks.Interop.swpublished`).
+3. Kopieer de logica uit `macros/PackAndRename.bas` naar een klas en schrijf een `ISwAddin`-implementatie die de functionaliteit aanroept.
+4. Compileer de `.dll` en registreer deze via **Tools → Add-ins → Add...** of met `regasm.exe`.
+
 ## Aanpassen
 - Pas eventueel de startnummers aan in `PackAndRename.bas` (variabelen `partCounter` en `asmCounter`).
 - De helperfunctie `BuildNumber` bepaalt het nummerformaat (`00`).
