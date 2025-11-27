@@ -121,11 +121,13 @@ Private Sub btnRun_Click()
 End Sub
 
 Public Sub InitializeWithDefaults(ByVal swModel As SldWorks.ModelDoc2)
-    txtPrefix.Text = "XXX"
+    Dim suggestedPrefix As String
+
+    suggestedPrefix = GetSuggestedPrefix(swModel)
+
+    txtPrefix.Text = suggestedPrefix
     chkIncludeDrawings.Value = True
-    lblHelp.Caption = "Exporteert alle parts (Pxx), subassemblies (Axx) en tekeningen naar één map." & vbCrLf & _
-                      "Top-level assembly wordt A00; overige assemblies A01, A02, ..." & vbCrLf & _
-                      "Parts volgen P01, P02, ... met dezelfde prefix."
+    lblHelp.Caption = BuildHelpMessage(suggestedPrefix)
     txtOutputFolder.Text = GetDefaultFolder(swModel)
 End Sub
 
@@ -151,4 +153,22 @@ Private Function BrowseForFolder(prompt As String) As String
     Else
         BrowseForFolder = ""
     End If
+End Function
+
+Private Function GetSuggestedPrefix(ByVal swModel As SldWorks.ModelDoc2) As String
+    Dim baseName As String
+
+    baseName = GetBaseName(swModel.GetPathName)
+
+    If Len(baseName) = 0 Then
+        baseName = "PRJ"
+    End If
+
+    GetSuggestedPrefix = baseName
+End Function
+
+Private Function BuildHelpMessage(ByVal prefix As String) As String
+    BuildHelpMessage = "Exporteert alle parts (Pxx), subassemblies (Axx) en tekeningen naar één map." & vbCrLf & _
+                      "Top-level assembly wordt " & prefix & "-A00; overige assemblies " & prefix & "-A01, A02, ..." & vbCrLf & _
+                      "Parts volgen " & prefix & "-P01, P02, ...; tekeningen volgen het bijbehorende model en krijgen unieke namen."
 End Function
