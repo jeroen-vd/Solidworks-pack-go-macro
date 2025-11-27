@@ -21,6 +21,17 @@ Deze repository bevat een VBA-macro die het standaard Pack & Go-proces uitbreidt
    - **Tekeningen meenemen**: vink aan indien je tekeningen wilt exporteren.
 5. Klik **Uitvoeren** om het Pack & Go-proces met nieuwe namen te starten.
 
+## Snelle testexport uitvoeren
+Wil je snel controleren of de macro in jouw SOLIDWORKS-omgeving correct exporteert? Gebruik dan deze stappen:
+
+1. Maak een tijdelijke map aan, bijvoorbeeld `C:\Temp\PackRenameTest`.
+2. Open een kleine testassembly (een paar parts/subassemblies is genoeg) en sla deze op zodat het bestandspad bekend is.
+3. Start de macro en vul in de pop-up:
+   - **Prefix**: kies bijvoorbeeld `TEST`.
+   - **Exportmap**: kies de zojuist aangemaakte map.
+   - **Tekeningen meenemen**: vink alleen aan als er tekeningen bij je test horen.
+4. Klik **Uitvoeren**. In de exportmap verschijnt één pakket met automatisch hernoemde bestanden (bijv. `TEST-A00`, `TEST-A01`, `TEST-P01`, ...). De nieuwe namen kun je direct openen in SOLIDWORKS om te controleren of alles klopt.
+
 ## Aanpassen
 - Pas eventueel de startnummers aan in `PackAndRename.bas` (variabelen `partCounter` en `asmCounter`).
 - De helperfunctie `BuildNumber` bepaalt het nummerformaat (`00`).
