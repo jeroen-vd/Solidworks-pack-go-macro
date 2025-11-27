@@ -25,6 +25,11 @@ Public Sub Main()
         Exit Sub
     End If
 
+    If Len(swModel.GetPathName) = 0 Then
+        MsgBox "Please save the assembly before running Pack & Rename so the output location can be resolved.", vbExclamation, "Pack & Rename"
+        Exit Sub
+    End If
+
     ' Show the configuration form
     PackAndRenameForm.InitializeWithDefaults swModel
     PackAndRenameForm.Show
@@ -43,6 +48,11 @@ Public Sub ExecutePackAndRename(ByVal swModel As SldWorks.ModelDoc2, _
     Dim docCount As Long
 
     modelPath = swModel.GetPathName
+    If Len(modelPath) = 0 Then
+        MsgBox "Please save the assembly before running Pack & Rename so the output location can be resolved.", vbExclamation, "Pack & Rename"
+        Exit Sub
+    End If
+
     If Len(Dir$(outputFolder, vbDirectory)) = 0 Then
         MsgBox "Output folder does not exist: " & outputFolder, vbCritical, "Pack & Rename"
         Exit Sub
@@ -63,8 +73,10 @@ Public Sub ExecutePackAndRename(ByVal swModel As SldWorks.ModelDoc2, _
     Dim partMap As Object
     Dim asmMap As Object
     Dim drawingMap As Object
+    Dim usedDrawingNames As Object
     Dim partCounter As Long
     Dim asmCounter As Long
+    Dim drawingCounter As Long
     Dim baseModelName As String
     Dim currentPath As String
     Dim newBase As String
@@ -73,9 +85,11 @@ Public Sub ExecutePackAndRename(ByVal swModel As SldWorks.ModelDoc2, _
     Set partMap = CreateObject("Scripting.Dictionary")
     Set asmMap = CreateObject("Scripting.Dictionary")
     Set drawingMap = CreateObject("Scripting.Dictionary")
+    Set usedDrawingNames = CreateObject("Scripting.Dictionary")
 
     partCounter = 1
     asmCounter = 1
+    drawingCounter = 1
 
     For i = 0 To docCount - 1
         currentPath = docNames(i)
@@ -110,9 +124,10 @@ Public Sub ExecutePackAndRename(ByVal swModel As SldWorks.ModelDoc2, _
         baseModelName = drawingMap(key)
         newBase = ResolveDrawingBase(baseModelName, partMap, asmMap)
         If Len(newBase) = 0 Then
-            ' fallback to prefix + drawing counter aligned to assemblies
-            newBase = prefix & "-DWG-" & baseModelName
+            newBase = BuildNumber(prefix, "D", drawingCounter)
+            drawingCounter = drawingCounter + 1
         End If
+        newBase = EnsureUniqueDrawingName(newBase, usedDrawingNames, drawingCounter)
         drawingMap(key) = newBase
     Next key
 
@@ -173,7 +188,7 @@ Private Function GetExtension(ByVal path As String) As String
     End If
 End Function
 
-Private Function GetBaseName(ByVal path As String) As String
+Public Function GetBaseName(ByVal path As String) As String
     Dim namePart As String
     namePart = Mid$(path, InStrRev(path, "\") + 1)
     If InStr(namePart, ".") > 0 Then
@@ -202,4 +217,22 @@ Private Function ResolveDrawingBase(ByVal baseModelName As String, _
     Next key
 
     ResolveDrawingBase = ""
+End Function
+
+Private Function EnsureUniqueDrawingName(ByVal candidate As String, _
+                                          ByVal usedNames As Object, _
+                                          ByRef drawingCounter As Long) As String
+    Dim uniqueName As String
+
+    uniqueName = candidate
+
+    If usedNames.Exists(LCase$(uniqueName)) Then
+        Do
+            uniqueName = candidate & "-DWG" & Format$(drawingCounter, "00")
+            drawingCounter = drawingCounter + 1
+        Loop While usedNames.Exists(LCase$(uniqueName))
+    End If
+
+    usedNames.Add LCase$(uniqueName), True
+    EnsureUniqueDrawingName = uniqueName
 End Function
